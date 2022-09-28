@@ -1,0 +1,11 @@
+{
+    "name": "Edufund#10",
+    "description": "A edufund NFT use to fund a school toilet ",
+    "image": "QmSiGTwi2yLUGoN3p5dXaCNxjJkjEx3LhsBoGGk9AexLjb/10-toilet.jpg",
+    "attributes": [
+        { "trait_type": "type", "value": "basic" },
+        { "trait_type": "type", "value": "secondary" },
+        { "trait_type": "type", "value": "tertiary" },
+        { "trait_type": "need", "value": "toilet"}
+    ]
+}

@@ -1,0 +1,11 @@
+{
+    "name": "Edufund#3",
+    "description": "A edufund NFT use to fund school furniture ",
+    "image": "QmSiGTwi2yLUGoN3p5dXaCNxjJkjEx3LhsBoGGk9AexLjb/3-furniture.jpg",
+    "attributes": [
+        { "trait_type": "type", "value": "basic" },
+        { "trait_type": "type", "value": "secondary" },
+        { "trait_type": "type", "value": "tertiary" },
+        { "trait_type": "need", "value": "furniture"}
+    ]
+}
