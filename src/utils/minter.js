@@ -1,24 +1,28 @@
+import { create as ipfsHttpClient } from "ipfs-http-client";
 import {Web3Storage} from "web3.storage/dist/bundle.esm.min.js";
 import { ethers } from "ethers";
 import axios from "axios";
 import { Buffer } from 'buffer';
 
-
 // initialize IPFS
-const ipfsClient = require('ipfs-http-client');
-const projectId = '2FMpjpUwR5R1PBvgXsQUVqLn5i6';
-const projectSecret = 'dece04dd53bda492e7c135420fc72bed' ;
+const projectId = process.env.REACT_APP_PROJECT_ID;
+const projectSecret = process.env.REACT_APP_API_KEY_SECRET ;
 const auth =
-'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64');
+	"Basic " +
+	Buffer.from(
+		projectId +
+			":" +
+    projectSecret
+	).toString("base64");
 
-const client = ipfsClient.create({
-  host: 'ipfs.infura.io',
-  port: 5001,
-  protocol: 'https',
-  apiPath: '/api/v0',
-  headers: {
-    authorization: auth,
-  },
+const client = ipfsHttpClient({
+	host: "ipfs.infura.io",
+	port: 5001,
+	protocol: "https",
+	apiPath: "/api/v0",
+	headers: {
+		authorization: auth,
+	},
 });
 
 export const createFacility = async (
@@ -37,7 +41,7 @@ export const createFacility = async (
       description,
       image: ipfsImage,
       properties,
-      owner: defaultAccount
+      owner: defaultAccount,
     });
     
   
@@ -45,7 +49,7 @@ export const createFacility = async (
       // save NFT metadata to IPFS
       const added = await client.add(data);
       // IPFS url for uploaded metadata
-      const url = `https://edufundnft.infura-ipfs.io/${added.path}`
+      const url = `https://ipfs.io/ipfs/${added.path}`
       const _price = ethers.utils.parseUnits(String(price), "ether");
     
       // mint the NFT and save the IPFS url to the blockchain
@@ -67,7 +71,7 @@ export const uploadToIpfs = async (e) => {
       const added = await client.add(file, {
           progress: (prog) => console.log(`received: ${prog}`),
       });
-      return `https://edufundnft.infura-ipfs.io/${added.path}`;
+      return `https://ipfs.io/ipfs/${added.path}`;
   } catch (error) {
       console.log("Error uploading file: ", error);
   }
@@ -77,6 +81,7 @@ export const uploadToIpfs = async (e) => {
  
 export const uploadFileToWebStorage = async (e) => {
   // Construct with token and endpoint
+ //const client = new Web3Storage({token: process.env.REACT_APP_STORAGE_API_KEY});
  const client = new Web3Storage({token: process.env.REACT_APP_STORAGE_API_KEY});
   const file = e.target.files;
   if (!file) return;
@@ -86,9 +91,9 @@ export const uploadFileToWebStorage = async (e) => {
 
   // Fetch and verify files from web3.storage
   const res = await client.get(rootCid) // Promise<Web3Response | null>
-  const files = await res.files() // Promise<Web3File[]>
+  const files = await res.file() // Promise<Web3File[]>
 
-  return `https://edufundnft.infura-ipfs.io/${files[0].cid}`;
+  return `https://ipfs.io/ipfs/${files[0].cid}`;
 };
 // get the metadata for an NFT from IPFS
 export const getFacility = async (minterContract) => {
@@ -111,7 +116,7 @@ export const getFacility = async (minterContract) => {
           description: meta.data.description,
           properties: meta.data.properties ,
           image: meta.data.image,
-          sold: facility.sold
+          sold: facility.sold,
         });
       });
       facilities.push(facility);
@@ -122,11 +127,10 @@ export const getFacility = async (minterContract) => {
   }
 };
 // get all NFTs on the smart contract
-export const getNftMeta = async () => {
-  const ipfsUrl = 'https://edufundnft.infura-ipfs.io/QmeWZ2bKgeQwLaLDj5sZV521ND8P2uUHtDzmo2uDJdkZRR'
+export const getNftMeta = async (tokenUri) => {
   try {
-    if (!ipfsUrl) return null;
-    const meta = await axios.get(ipfsUrl);
+    if (!tokenUri) return null;
+    const meta = await axios.get(tokenUri);
     return meta;
   } catch (e) {
     console.log({ e });
