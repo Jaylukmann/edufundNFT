@@ -40,11 +40,10 @@ export const createFacility = async (
       price,
       description,
       image: ipfsImage,
-      properties,
       owner: defaultAccount,
+      properties, 
     });
     
-  
     try {
       // save NFT metadata to IPFS
       const added = await client.add(data);
@@ -69,19 +68,18 @@ export const uploadToIpfs = async (e) => {
   if (!file) return;
   try {
       const added = await client.add(file, {
-          progress: (prog) => console.log(`received: ${prog}`),
+          progress: (prog) => console.log(`File received: ${prog}`),
       });
       return `https://ipfs.io/ipfs/${added.path}`;
   } catch (error) {
-      console.log("Error uploading file: ", error);
+      console.log(" file upload error: ", error);
   }
 };
 
-// function to upload a file to IPFS
+// function to upload a file to IPFS via web3.storage
  
 export const uploadFileToWebStorage = async (e) => {
   // Construct with token and endpoint
- //const client = new Web3Storage({token: process.env.REACT_APP_STORAGE_API_KEY});
  const client = new Web3Storage({token: process.env.REACT_APP_STORAGE_API_KEY});
   const file = e.target.files;
   if (!file) return;
@@ -91,7 +89,7 @@ export const uploadFileToWebStorage = async (e) => {
 
   // Fetch and verify files from web3.storage
   const res = await client.get(rootCid) // Promise<Web3Response | null>
-  const files = await res.file() // Promise<Web3File[]>
+  const files = await res.files() // Promise<Web3File[]>
 
   return `https://ipfs.io/ipfs/${files[0].cid}`;
 };
@@ -99,9 +97,9 @@ export const uploadFileToWebStorage = async (e) => {
 export const getFacility = async (minterContract) => {
   try {
     const facilities = [];
-    const facilitiesLength = await minterContract.methods.getTotalFacility().call();
-    for (let i = 1; i <= Number(facilitiesLength); i++) {
-      const facility = new Promise(async (resolve) => {
+    const facilityLength = await minterContract.methods.getTotalFacility().call();
+    for (let i = 1; i <= Number(facilityLength); i++) {
+      const nft = new Promise(async (resolve) => {
         const facility = await minterContract.methods.getFacility(i).call();
         console.log(facility);
         const res = await minterContract.methods.tokenURI(i).call();
@@ -111,15 +109,17 @@ export const getFacility = async (minterContract) => {
           index: i,
           tokenId: i,
           owner,
-          name: meta.data.name,
           price: facility.price,
-          description: meta.data.description,
-          properties: meta.data.properties ,
-          image: meta.data.image,
           sold: facility.sold,
+          name: meta?.data.name,
+          image: meta?.data.image,
+          description: meta?.data.description,
+          properties: meta?.data.properties ,
+      
+         
         });
       });
-      facilities.push(facility);
+      facilities.push(nft);
     }
     return Promise.all(facilities);
   } catch (e) {

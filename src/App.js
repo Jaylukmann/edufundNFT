@@ -4,7 +4,7 @@ import { Notification } from "./components/ui/Notifications";
 import Wallet from "./components/wallet";
 import { useBalance, useMinterContract } from "./hooks";
 
-import NftCard from "./components/minter/nft";
+import Nfts from "./components/minter/nft";
 import { useContractKit } from "@celo-tools/use-contractkit";
 
 import "./App.css";
@@ -44,7 +44,7 @@ const App = function AppWrapper() {
           </Nav>
           <main>
             {/*list NFTs*/}
-            <NftCard
+            <Nfts
               name="Fund an Educational Facility Project"
               updateBalance={getBalance}
               minterContract={minterContract}

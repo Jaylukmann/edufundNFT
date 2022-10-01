@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { Button, Modal, Form, FloatingLabel } from "react-bootstrap";
-//import { uploadToIpfs } from "../../../utils/minter";
 import { uploadFileToWebStorage } from "../../../utils/minter";
 
 // basic properties that can be added to NFT
