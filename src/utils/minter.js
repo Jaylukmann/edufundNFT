@@ -1,29 +1,23 @@
-import { create as ipfsHttpClient } from "ipfs-http-client";
-import {Web3Storage} from "web3.storage/dist/bundle.esm.min.js";
+import {Web3Storage,getFilesFromPath} from "web3.storage/dist/bundle.esm.min.js";
 import { ethers } from "ethers";
 import axios from "axios";
-import { Buffer } from 'buffer';
 
-// initialize IPFS
-const projectId = process.env.REACT_APP_PROJECT_ID;
-const projectSecret = process.env.REACT_APP_API_KEY_SECRET ;
-const auth =
-	"Basic " +
-	Buffer.from(
-		projectId +
-			":" +
-    projectSecret
-	).toString("base64");
 
-const client = ipfsHttpClient({
-	host: "ipfs.infura.io",
-	port: 5001,
-	protocol: "https",
-	apiPath: "/api/v0",
-	headers: {
-		authorization: auth,
-	},
-});
+// initialize web3Storage
+const token = process.env.REACT_APP_STORAGE_API_KEY;
+const client = new Web3Storage({token})
+
+//store files
+export const uploadFileToWebStorage = async(e)=>{
+  const files = await getFilesFromPath(e.target.file);
+     if (!files) return;
+  const cid = await client.put(files);
+  console.log(`New file received:${cid}`)
+  const res = await client.get(cid) // Promise<Web3Response | null>
+   const file = await res.files() // Promise<Web3File[]>
+
+   return `https://ipfs.io/ipfs/${cid}/${file}`
+}
 
 export const createFacility = async (
   minterContract,
@@ -43,10 +37,10 @@ export const createFacility = async (
       owner: defaultAccount,
       properties, 
     });
-    
+  
     try {
       // save NFT metadata to IPFS
-      const added = await client.add(data);
+      const added = await client.put(data);
       // IPFS url for uploaded metadata
       const url = `https://ipfs.io/ipfs/${added.path}`
       const _price = ethers.utils.parseUnits(String(price), "ether");
@@ -61,38 +55,7 @@ export const createFacility = async (
     }
   });
 };
-
-// function to upload a file to IPFS
-export const uploadToIpfs = async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-  try {
-      const added = await client.add(file, {
-          progress: (prog) => console.log(`File received: ${prog}`),
-      });
-      return `https://ipfs.io/ipfs/${added.path}`;
-  } catch (error) {
-      console.log(" file upload error: ", error);
-  }
-};
-
-// function to upload a file to IPFS via web3.storage
  
-export const uploadFileToWebStorage = async (e) => {
-  // Construct with token and endpoint
- const client = new Web3Storage({token: process.env.REACT_APP_STORAGE_API_KEY});
-  const file = e.target.files;
-  if (!file) return;
-  // Pack files into a CAR and send to web3.storage
-  const rootCid = await client.put(file) // Promise<CIDString>
-  console.log("uploading file");
-
-  // Fetch and verify files from web3.storage
-  const res = await client.get(rootCid) // Promise<Web3Response | null>
-  const files = await res.files() // Promise<Web3File[]>
-
-  return `https://ipfs.io/ipfs/${files[0].cid}`;
-};
 // get the metadata for an NFT from IPFS
 export const getFacility = async (minterContract) => {
   try {
@@ -114,9 +77,7 @@ export const getFacility = async (minterContract) => {
           name: meta?.data.name,
           image: meta?.data.image,
           description: meta?.data.description,
-          properties: meta?.data.properties ,
-      
-         
+          properties: meta?.data.properties , 
         });
       });
       facilities.push(nft);
@@ -129,7 +90,7 @@ export const getFacility = async (minterContract) => {
 // get all NFTs on the smart contract
 export const getNftMeta = async (tokenUri) => {
   try {
-    if (!tokenUri) return null;
+    if (!tokenUri) return;
     const meta = await axios.get(tokenUri);
     return meta;
   } catch (e) {

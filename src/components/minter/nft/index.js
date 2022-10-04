@@ -3,7 +3,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { toast } from "react-toastify";
 import PropTypes from "prop-types";
 import AddNfts from "./Add";
-import NftCard  from "./Card";
+import Nft from "./Card";
 import Loader from "../../ui/Loader";
 import { NotificationSuccess, NotificationError } from "../../ui/Notifications";
 import {
@@ -114,7 +114,7 @@ const NftList = ({ minterContract, name }) => {
             <Row xs={1} sm={2} lg={3} className="g-3  mb-5 g-xl-4 g-xxl-5">
               {/* display all NFTs */}
               {facilities.map((facility) => (
-                <NftCard
+                <Nft
                   key={facility.index}
                   account={defaultAccount}
                   contractOwner={nftOwner}

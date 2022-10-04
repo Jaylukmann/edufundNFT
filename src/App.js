@@ -45,7 +45,7 @@ const App = function AppWrapper() {
           <main>
             {/*list NFTs*/}
             <Nfts
-              name="Fund an Educational Facility Project"
+              name="Fund an Educational Facility"
               updateBalance={getBalance}
               minterContract={minterContract}
             />
@@ -54,7 +54,7 @@ const App = function AppWrapper() {
       ) : (
         //  if user wallet is not connected display cover page
         <Cover
-          name="Fund an Educational Facility Project"
+          name="Fund an Educational Facility"
           coverImg={
             "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzQ5CvJIwej7Kg7we_8pa5FI96A2D4LfI-TQ&usqp=CAU"
           }

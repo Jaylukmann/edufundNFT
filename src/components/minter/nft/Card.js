@@ -13,7 +13,7 @@ import Identicon from "../../ui/Identicon";
   fundRelistFacility,
   reList,
   }) => {
-  const {  image, description, owner, name, index, price, properties, sold } = facility;
+  const{image, description, owner, name, index, price, properties, sold } = facility;
 
   return (
     <Col key={index}>
@@ -39,7 +39,7 @@ import Identicon from "../../ui/Identicon";
           <Card.Text className="flex-grow-1">{description}</Card.Text>
           <div>
             <Row className="mt-2">
-              {properties.map((property, key) => (
+              {properties.map((property,key) => (
                 <Col key={key}>
                   <div className="border rounded bg-light">
                     <div className="text-secondary fw-lighter small text-capitalize">
@@ -81,6 +81,6 @@ import Identicon from "../../ui/Identicon";
 
 NftCard.propTypes = {
   // props passed into this component
-  facility: PropTypes.instanceOf(Object).isRequired,
+  nft: PropTypes.instanceOf(Object).isRequired,
 };
 export default NftCard;
