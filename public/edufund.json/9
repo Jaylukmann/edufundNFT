@@ -1,7 +1,7 @@
 {
     "name": "Edufund#9",
     "description": "A edufund NFT use to fund a school site ",
-    "image": "QmSiGTwi2yLUGoN3p5dXaCNxjJkjEx3LhsBoGGk9AexLjb/9-school-site.jpg",
+    "image": "QmSiGTwi2yLUGoN3p5dXaCNxjJkjEx3LhsBoGGk9AexLjb/9.jpg",
     "attributes": [
         { "trait_type": "type", "value": "basic" },
         { "trait_type": "type", "value": "secondary" },

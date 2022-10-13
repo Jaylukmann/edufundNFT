@@ -3,12 +3,9 @@ import Cover from "./components/Cover";
 import { Notification } from "./components/ui/Notifications";
 import Wallet from "./components/wallet";
 import { useBalance, useMinterContract } from "./hooks";
-
 import Nfts from "./components/minter/nft";
 import { useContractKit } from "@celo-tools/use-contractkit";
-
 import "./App.css";
-
 import { Container, Nav } from "react-bootstrap";
 
 const App = function AppWrapper() {

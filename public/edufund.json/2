@@ -1,7 +1,7 @@
 {
     "name": "Edufund#2",
     "description": "A edufund NFT use to fund computer sets ",
-    "image": "QmSiGTwi2yLUGoN3p5dXaCNxjJkjEx3LhsBoGGk9AexLjb/2-computer.jpg",
+    "image": "QmSiGTwi2yLUGoN3p5dXaCNxjJkjEx3LhsBoGGk9AexLjb/2.jpg",
     "attributes": [
         { "trait_type": "type", "value": "basic" },
         { "trait_type": "type", "value": "secondary" },

@@ -3,7 +3,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { toast } from "react-toastify";
 import PropTypes from "prop-types";
 import AddNfts from "./Add";
-import Nft from "./Card";
+import NftCard from "./Card";
 import Loader from "../../ui/Loader";
 import { NotificationSuccess, NotificationError } from "../../ui/Notifications";
 import {
@@ -12,6 +12,7 @@ import {
   reList,
   createFacility,
   getContractOwner,
+  fundRelistFacility,
 } from "../../../utils/minter";
 import { Row } from "react-bootstrap";
 
@@ -55,7 +56,7 @@ const NftList = ({ minterContract, name }) => {
     }
   };
 
-  const fund = async (index, tokenId) => {
+   const fund = async (index, tokenId) => {
     try {
       setLoading(true);
       await fundFacility(minterContract, index, tokenId, performActions);
@@ -68,11 +69,24 @@ const NftList = ({ minterContract, name }) => {
     }
   };
 
-  const listAgain = async (index) => {
+     const listAgain = async (index) => {
     try {
       setLoading(true);
       await reList(minterContract, index, performActions);
       toast(<NotificationSuccess text="Re-listing an EdufundNFT...." />);
+      getTotalFacility();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+   const refundNFT = async (index, tokenId) => {
+    try {
+      setLoading(true);
+      await fundRelistFacility(minterContract, index, tokenId, performActions);
+      toast(<NotificationSuccess text="Re-funding an EduFundNFT...." />);
       getTotalFacility();
     } catch (error) {
       console.log(error);
@@ -114,14 +128,15 @@ const NftList = ({ minterContract, name }) => {
             <Row xs={1} sm={2} lg={3} className="g-3  mb-5 g-xl-4 g-xxl-5">
               {/* display all NFTs */}
               {facilities.map((facility) => (
-                <Nft
+                <NftCard
                   key={facility.index}
                   account={defaultAccount}
                   contractOwner={nftOwner}
                   fundFacility={() => fund(facility.index, facility.tokenId)}
-                  listAgain={() => listAgain(facility.tokenId)}
+                  fundRelistFacility={()=>refundNFT(facility.index, facility.tokenId)}
+                  reList={() => listAgain(facility.tokenId)}
                   facility={{
-                    ...facility,
+                    ...facility,     
                   }}
                 />
               ))}

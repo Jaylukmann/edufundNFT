@@ -4,14 +4,16 @@ import { Card, Col, Badge, Stack, Row } from "react-bootstrap";
 import {  Button } from "react-bootstrap";
 import { truncateAddress } from "../../../utils";
 import Identicon from "../../ui/Identicon";
+import {
+  fundFacility,
+  reList,
+  fundRelistFacility,
+} from "../../../utils/minter";
 
   const NftCard = ({
   facility,
   account,
   contractOwner,
-  fundFacility,
-  fundRelistFacility,
-  reList,
   }) => {
   const{image, description, owner, name, index, price, properties, sold } = facility;
 
@@ -39,8 +41,8 @@ import Identicon from "../../ui/Identicon";
           <Card.Text className="flex-grow-1">{description}</Card.Text>
           <div>
             <Row className="mt-2">
-              {properties.map((property,key) => (
-                <Col key={key}>
+              {properties?.map((property) => (
+                <Col key={index}>
                   <div className="border rounded bg-light">
                     <div className="text-secondary fw-lighter small text-capitalize">
                       {property.trait_type}
@@ -54,18 +56,22 @@ import Identicon from "../../ui/Identicon";
             </Row>
           </div>
           {contractOwner === account ? (
-            <h2>Administrator</h2>
-          ) : !sold ? (
-            <Button variant="primary" onClick={fundFacility}>
-              Fund Educational Facility
-            </Button>)
-            
-             (<Button variant="primary" onClick={ fundRelistFacility}>
-             Re-fund NFT
+             <React.Fragment>
+            <p className="text-success fw-lighter large text-capitalize">Dapp Administrator</p>
+              <p className="text-primary fw-lighter large ">Use the + button to mint more eduFundNFTs</p>
+              </React.Fragment>
+              
+          ) : !sold && contractOwner !== account? (
+            <Button variant="primary" onClick={ fundFacility}>
+              Fund Facility
+            </Button>
+            ): contractOwner !== account && account !== owner && sold ? 
+             (<Button variant="primary" onClick={fundRelistFacility }>
+             Re-fund Facility
            </Button>
-          ) : account === owner ? (
+          ) : account === owner  && sold ? (
             <Button variant="outline-danger" onClick={reList}>
-            RE-LIST
+            Re-list
             </Button>
           ) : (
             <Button variant="outline-danger" disabled>
@@ -81,6 +87,6 @@ import Identicon from "../../ui/Identicon";
 
 NftCard.propTypes = {
   // props passed into this component
-  nft: PropTypes.instanceOf(Object).isRequired,
+  facility: PropTypes.instanceOf(Object).isRequired,
 };
 export default NftCard;
