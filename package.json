@@ -1,7 +1,4 @@
 {
-  "name": "edufund-nft-project",
-  "version": "0.1.0",
-  "private": true,
   "dependencies": {
     "@celo-tools/use-contractkit": "3.0.0-beta2",
     "@celo/contractkit": "^1.5.2",
@@ -17,6 +14,7 @@
     "bootstrap-icons": "^1.7.1",
     "buffer": "^6.0.3",
     "dotenv": "^10.0.0",
+    "gh-pages": "^4.0.0",
     "ipfs-http-client": "^50.0.0",
     "latest-version": "^7.0.0",
     "prop-types": "^15.7.2",
@@ -27,33 +25,6 @@
     "react-toastify": "^8.1.0",
     "web-vitals": "^1.0.1",
     "web3.storage": "^4.4.0"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "compile": "npx hardhat compile",
-    "deploy": "npx hardhat run --network alfajores scripts/deploy.js",
-    "test-contract": "npx hardhat test"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.0",
