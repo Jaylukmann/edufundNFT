@@ -1,6 +1,7 @@
 import { useContractKit } from "@celo-tools/use-contractkit";
 import React, { useEffect, useState, useCallback } from "react";
 import { toast } from "react-toastify";
+import { ethers } from "ethers";
 import PropTypes from "prop-types";
 import AddNfts from "./Add";
 import NftCard from "./Card";
@@ -12,7 +13,6 @@ import {
   reList,
   createFacility,
   getContractOwner,
-  fundRelistFacility,
 } from "../../../utils/minter";
 import { Row } from "react-bootstrap";
 
@@ -69,10 +69,11 @@ const NftList = ({ minterContract, name }) => {
     }
   };
 
-     const listAgain = async (index) => {
+     const listAgain = async (index,price) => {
     try {
       setLoading(true);
-      await reList(minterContract, index, performActions);
+      const _price = ethers.utils.parseUnits(String(price), "ether");
+      await reList(minterContract, index,_price, performActions);
       toast(<NotificationSuccess text="Re-listing an EdufundNFT...." />);
       getTotalFacility();
     } catch (error) {
@@ -82,24 +83,24 @@ const NftList = ({ minterContract, name }) => {
     }
   };
 
-   const refundNFT = async (index, tokenId) => {
-    try {
-      setLoading(true);
-      await fundRelistFacility(minterContract, index, tokenId, performActions);
-      toast(<NotificationSuccess text="Re-funding an EduFundNFT...." />);
-      getTotalFacility();
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  //  const refundNFT = async (index, tokenId) => {
+  //   try {
+  //     setLoading(true);
+  //     await fundFacility(minterContract, index, tokenId, performActions);
+  //     toast(<NotificationSuccess text="Re-funding an EduFundNFT...." />);
+  //     getTotalFacility();
+  //   } catch (error) {
+  //     console.log(error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
 
   const getOwner = useCallback(async (minterContract) => {
     // get the address that deployed the NFT contract
-    const _address = await getContractOwner(minterContract);
-    setNftOwner(_address);
+    const address = await getContractOwner(minterContract);
+    setNftOwner(address);
   }, []);
 
   useEffect(() => {
@@ -132,9 +133,9 @@ const NftList = ({ minterContract, name }) => {
                   key={facility.index}
                   account={defaultAccount}
                   contractOwner={nftOwner}
-                  fundFacility={() => fund(facility.index, facility.tokenId)}
-                  fundRelistFacility={()=>refundNFT(facility.index, facility.tokenId)}
-                  reList={() => listAgain(facility.tokenId)}
+                  fundFacility={() => fund( facility.tokenId)}
+                  reFundFacility={() => fund( facility.tokenId)}
+                  reList={() => listAgain(facility.tokenId,facility.price)}
                   facility={{
                     ...facility,     
                   }}

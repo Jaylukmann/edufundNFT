@@ -11,10 +11,46 @@ import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 
 import "hardhat/console.sol";
 
-contract EduFundNFT is ERC721URIStorage,Ownable,IERC721Receiver{
+contract EduFundNFT is ERC721URIStorage,ERC721Enumerable,Ownable,IERC721Receiver{
 
   //CONSTRUCTOR
     constructor() ERC721("EduFundNFT", "EFNFT") {}
+   //The following functions are overrides required by Solidity as they are declared times from the source
+
+    function _beforeTokenTransfer(address from, address to, uint256 tokenId)
+        internal
+        override(ERC721, ERC721Enumerable)
+    {
+        super._beforeTokenTransfer(from, to, tokenId);
+    }
+
+    function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
+        super._burn(tokenId);
+    }
+
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        override(ERC721, ERC721URIStorage)
+        returns (string memory)
+    {
+        return super.tokenURI(tokenId);
+    }
+
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        override(ERC721, ERC721Enumerable)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
+    }
+    function safeMint(address to, string memory uri) public onlyOwner {
+        uint256 tokenId = _tokenIdCounter.current();
+        _tokenIdCounter.increment();
+        _safeMint(to, tokenId);
+        _setTokenURI(tokenId, uri);
+    }
 
   // STATE VARIABLES
     using Counters for Counters.Counter;
@@ -44,41 +80,7 @@ contract EduFundNFT is ERC721URIStorage,Ownable,IERC721Receiver{
         "Only new NFT owner Can Relist");
         _;
     }
-   function safeMint(address to, string memory uri) public onlyOwner {
-        uint256 tokenId = _tokenIdCounter.current();
-        _tokenIdCounter.increment();
-        _safeMint(to, tokenId);
-        _setTokenURI(tokenId, uri);
-    }
-    //The following functions are overrides required by Solidity.
-
-    function _beforeTokenTransfer(address from, address to, uint256 tokenId)
-        internal override
-    {
-        super._beforeTokenTransfer(from, to, tokenId);
-    }
-
-    function _burn(uint256 tokenId) internal override {
-        super._burn(tokenId);
-    }
-
-    function tokenURI(uint256 tokenId)
-        public
-        view override
-        returns (string memory)
-    {
-        return super.tokenURI(tokenId);
-    }
-
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view override
-        returns (bool)
-    {
-        return super.supportsInterface(interfaceId);
-    }
-
-
+   
     function createFacility(string memory _tokenURI, uint256 price) public onlyOwner
      payable returns (uint) {
         _tokenIdCounter.increment();
@@ -118,34 +120,23 @@ contract EduFundNFT is ERC721URIStorage,Ownable,IERC721Receiver{
         );
     }
 
-    function buyNFT_to_fund_Edu(address _nftContractAddress,uint256 _tokenId) public payable {
+    function buyNFT_to_fund_Edu(uint256 _tokenId) public payable {
         uint price = facility[_tokenId].price;
-        require(msg.value >= price, "Value must be equal to NFT price");
+        address payable  owner = facility[_tokenId].owner;
+        address payable seller = facility[_tokenId].seller;
+        require(msg.value >= price, "Value must be equal to or greater than NFT price");
         require(facility[_tokenId].isForResale == false," NFT is for resale");
-        IERC721(_nftContractAddress).safeTransferFrom(address(this),msg.sender, _tokenId);
          facility[_tokenId].sold = true;
         facility[_tokenId].owner = payable(msg.sender); 
         facility[_tokenId].seller = payable(address(0));
-        (bool done, ) = payable(Ownable.owner()).call{value:(msg.value)}("");
-        require (done,"Cannot send value to the contract owner"); 
-        facility[_tokenId].isForResale = true;     
+        facility[_tokenId].isForResale = true; 
+
+         if(facility[_tokenId].isForResale){
+            payable(owner).transfer(price);
+         }  
+          payable(seller).transfer(price);
     }
 
-        function buyResaleNFT(address _nftContractAddress,uint256 _tokenId) public payable {
-        uint price = facility[_tokenId].price;
-        require(msg.value >= price, "Value must be equal to NFT price");
-        require(facility[_tokenId].isForResale == true, "NFT is not for resale");
-        IERC721(_nftContractAddress).safeTransferFrom(address(this),msg.sender, _tokenId);
-            address seller = facility[_tokenId].seller;
-            (bool send, ) = payable(seller).call{value: (msg.value * 70)/100}("");
-        require(send, "Cannot send value to the new NFT owner");
-         (bool etherSent, ) = payable(Ownable.owner()).call{value: (msg.value * 30)/100}("");
-        require(etherSent, "Cannot send value to the contract owner");
-         facility[_tokenId].owner = payable(msg.sender); 
-         facility[_tokenId].sold = true;
-         facility[_tokenId].isForResale = true;
-        }  
-    
     function getNftOwner(uint index) public view returns (address) {
         return facility[index].owner;
     }
@@ -170,7 +161,7 @@ contract EduFundNFT is ERC721URIStorage,Ownable,IERC721Receiver{
      function changeNFTPrice(uint _listPrice) public payable onlyOwner {
         listPrice = _listPrice;
     }
-
+                        //GETTERS
     function getListPrice() public view returns (uint256) {
         return listPrice;
     }
@@ -194,5 +185,5 @@ contract EduFundNFT is ERC721URIStorage,Ownable,IERC721Receiver{
     }
 
 }
-//contract 0x8d9198Bdef669Bf2aa0266B6fc7Bd73B39cC11a8
-//https://edufundnft.infura-ipfs.io/QmWBzgZ6n9kPLjJ8KspUDxjXDmge2Ghu7qaKLVi2rhqDPs
+//EduFundNFT  0xd9bD3a52BC33064eEDe5F331173B9B6FB50411f8
+//

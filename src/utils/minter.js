@@ -1,10 +1,10 @@
 import { create as ipfsHttpClient } from "ipfs-http-client";
-//import {Web3Storage} from "web3.storage/dist/bundle.esm.min.js";
+import {Web3Storage} from 'web3.storage/dist/bundle.esm.min.js'
 import { ethers } from "ethers";
 import axios from "axios";
 import { Buffer } from 'buffer';
 
-// initialize IPFS
+//initialize IPFS
 const projectId = process.env.REACT_APP_PROJECT_ID;
 const projectSecret = process.env.REACT_APP_API_KEY_SECRET ;
 const auth =
@@ -44,12 +44,13 @@ export const createFacility = async (
       owner: defaultAccount,
     });
     
-    try {
       // save NFT metadata to IPFS
       const added = await client.add(data);
-      // IPFS url for uploaded metadata
-      const url = `https://edufundNFT.infura-ipfs.io/ipfs/${added.path}`
+      //IPFS url for uploaded metadata
+      try {
       const _price = ethers.utils.parseUnits(String(price), "ether");
+      const url = `https://infura-ipfs.io/ipfs/${added.path}`
+      
     
       // mint the NFT and save the IPFS url to the blockchain
       let transaction = await minterContract.methods
@@ -59,49 +60,49 @@ export const createFacility = async (
     } catch (error) {
       console.log("Error uploading file: ", error);
     }
-  });
-};
+   });
+ };
 
-// function to upload a file to IPFS
+//function to upload a file to IPFS
 export const uploadToIpfs = async (file) => {
 	if (!file) return;
   try {
       const cid = await client.add(file, {
-          progress: (prog) => console.log(`received: ${prog}`),
+          progress: (prog) => console.log(`Received file now: ${prog}`),
       });
-      return `https://edufundNFT.infura-ipfs.io/ipfs/${cid}}`;
+      return `https://infura-ipfs.io/ipfs/${cid.path}`;
   } catch (error) {
       console.log("Error uploading file: ", error);
   }
 };
 
-// function to upload a file to web3.storage
-// export const uploadFileToWebStorage = async (e) => {
-//   // Construct with token and endpoint
-//   const token = process.env.REACT_APP_STORAGE_API_KEY;
-//  const client = new Web3Storage({token});
-//   // const file = e.target.files;
-//   // if (!file) return;
-//   // Pack files into a CAR and send to web3.storage
-//   const rootCid = await client.put(e.target.files) // Promise<CIDString>
-//   console.log("uploading file");
+export const uploadFileToWebStorage = async (e) => {
+  // Construct with token and endpoint
+  const client = new Web3Storage({token: process.env.REACT_APP_STORAGE_API_KEY})
 
-//   // Fetch and verify files from web3.storage
-//   const res = await client.get(rootCid) // Promise<Web3Response | null>
-//   const files = await res.file() // Promise<Web3File[]>
+  const file = e.target.files;
+  if (!file) return;
+  // Pack files into a CAR and send to web3.storage
+  const rootCid = await client.put(file) // Promise<CIDString>
 
-//   return `https://edufundNFT.infura-ipfs.io/ipfs/${files[0].cid}`;
-// };
+  // Fetch and verify files from web3.storage
+  const res = await client.get(rootCid) // Promise<Web3Response | null>
+  const files = await res.files() // Promise<Web3File[]>
+
+  return `https://infura-ipfs.io/ipfs/${files[0].cid}`;
+};
 // get the metadata for an NFT from IPFS
 export const getFacility = async (minterContract) => {
   try {
     const facilities = [];
-    const facilityLength = await minterContract.methods.getTotalFacility().call();
+    const facilityLength = await minterContract.methods.totalSupply().call();
     for (let i = 1; i <= Number(facilityLength); i++) {
       const nft = new Promise(async (resolve) => {
-        const facility = await minterContract.methods.getFacility(i).call();
-        console.log(facility);
+         const facility = await minterContract.methods.getFacility(i).call();
+         console.log(facility);
         const res = await minterContract.methods.tokenURI(i).call();
+        console.log(res);
+        
         const meta = await getNftMeta(res);
         const owner = await getNftOwner(minterContract, i);
         resolve({
@@ -124,11 +125,11 @@ export const getFacility = async (minterContract) => {
   }
 };
 // get all NFTs on the smart contract
-export const getNftMeta = async () => {
-  const cid = await uploadToIpfs();
+export const getNftMeta = async (ipfsUrl) => {
+  console.log(ipfsUrl);
   try {
-    if (!cid) return;
-    const meta = await axios.get(cid);
+    if (!ipfsUrl) return null;
+    const meta = await axios.get(ipfsUrl);
     return meta;
   } catch (e) {
     console.log({ e });
@@ -156,59 +157,39 @@ export const getContractOwner = async (minterContract) => {
   }
 };
 
-
-
 export const fundFacility = async (
   minterContract,
   index,
-  tokenId,
-  performActions
+  performActions,
+  tokenId
 ) => {
   try {
     await performActions(async (kit) => {
       const { defaultAccount } = kit;
-      const getFacility = await minterContract.methods
+      const facility = await minterContract.methods
       .getFacility(index).call();
       await minterContract.methods
         .buyNFT_to_fund_Edu(tokenId)
-        .send({ from: defaultAccount, value: getFacility.price });
+        .send({ from: defaultAccount, value: facility.price });
     });
   } catch (error) {
     console.log({ error });
   }
 };
 
-export const reList = async (minterContract, tokenId, performActions) => {
+export const reList = async (minterContract, performActions, tokenId) => {
   try {
     await performActions(async (kit) => {
       const { defaultAccount } = kit;
-      const getListPrice = await minterContract.methods
+      const price = await minterContract.methods
       .getListPrice().call();
-      console.log(getListPrice);
-      await minterContract.methods
-        .re_ListNFT(tokenId,minterContract)
-        .send({ from: defaultAccount, value: getListPrice });
+       console.log(price);
+       await minterContract.methods
+        .re_ListNFT(tokenId,price)
+        .send({ from: defaultAccount,value: price });
     });
   } catch (error) {
     console.log({ error });
   }
 };
 
-export const fundRelistFacility = async (
-  minterContract,
-  index,
-  tokenId,
-  performActions
-) => {
-  try {
-    await performActions(async (kit) => {
-      const { defaultAccount } = kit;
-      const getFacility = await minterContract.methods.getFacility(index).call();
-      await minterContract.methods
-        .buyResaleNFT(tokenId,minterContract)
-        .send({ from: defaultAccount, value: getFacility.price });
-    });
-  } catch (error) {
-    console.log({ error });
-  }
-};

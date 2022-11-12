@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { Button, Modal, Form, FloatingLabel } from "react-bootstrap";
-import {uploadToIpfs} from "../../../utils/minter";
+import {uploadFileToWebStorage} from "../../../utils/minter";
 
 // basic properties that can be added to NFT
 const TYPE = ["For Basic Schools", "For Secondary Schools"," For Tertiary Institutions"];
@@ -77,7 +77,7 @@ const AddNfts = ({ save, address }) => {
       {/* Modal */}
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Create EduFundNFT</Modal.Title>
+          <Modal.Title>Mint EduFundNFT</Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
@@ -128,7 +128,7 @@ const AddNfts = ({ save, address }) => {
               type="file"
               className={"mb-3"}
               onChange={async (e) => {
-                const imageUrl = await uploadToIpfs(e.target.files[0]);
+                const imageUrl = await uploadFileToWebStorage(e);
                 if (!imageUrl) {
                   alert("failed to upload image");
                   return;

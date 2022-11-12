@@ -14,7 +14,8 @@ describe("EduFundNFT", function () {
     // This is executed before each test
     // Deploying the smart contract
     const EduFundNFT = await ethers.getContractFactory("EduFundNFT");
-    [owner, acc1] = await ethers.getSigners();
+    [owner, acc1, acc2] = await ethers.getSigners();
+
     eduFundNFT = await EduFundNFT.deploy();
   });
 
@@ -23,38 +24,27 @@ describe("EduFundNFT", function () {
   });
 
   it("Should mint one NFT", async function () {
-    expect(await  eduFundNFT.balanceOf(acc1.address)).to.equal(0);
+    expect(await eduFundNFT.balanceOf(acc1.address)).to.equal(0);
 
     const tokenURI = "https://example.com/1";
-    const tx = await   eduFundNFT.connect(owner).safeMint(acc1.address, tokenURI);
+    const tx = await eduFundNFT.connect(owner).safeMint(acc1.address, tokenURI);
     await tx.wait();
 
-    expect(await   eduFundNFT.balanceOf(acc1.address)).to.equal(1);
+    expect(await eduFundNFT.balanceOf(acc1.address)).to.equal(1);
   });
 
- 
-it("Should set the correct tokenURI", async function() {
-  const tokenURI_1 = "https://example.com/1"
-  const tokenURI_2 = "https://example.com/2"
+  it("Should set the correct tokenURI", async function () {
+    const tokenURI_1 = "https://example.com/1";
+    const tokenURI_2 = "https://example.com/2";
 
-  const tx1 = await  eduFundNFT.connect(owner).safeMint(acc1.address, tokenURI_1);
-  await tx1.wait();
-  const tx2 = await  eduFundNFT.connect(owner).safeMint(acc2.address, tokenURI_2);
-  await tx2.wait();
+    const tx1 = await eduFundNFT.connect(owner).safeMint(acc1.address, tokenURI_1);
+    await tx1.wait();
+    const tx2 = await eduFundNFT.connect(owner).safeMint(acc2.address, tokenURI_2);
+    await tx2.wait();
 
-  expect(await  eduFundNFT.tokenURI(0)).to.equal(tokenURI_1);
-  expect(await  eduFundNFT.tokenURI(1)).to.equal(tokenURI_2);
-});
-
-
-
-  it("Should mint one NFT to the address of the owner", async function() {
-    expect(await eduFundNFT.balanceOf(owner.address)).to.equal(0);
-    const _tokenId = "1"
-    const tx = await eduFundNFT.connect(owner)._mint(owner.address, _tokenId);
-    await tx.wait(); 
-    expect(await eduFundNFT.balanceOf(owner.address)).to.equal(1);
-  })
+    expect(await eduFundNFT.tokenURI(0)).to.equal(tokenURI_1);
+    expect(await eduFundNFT.tokenURI(1)).to.equal(tokenURI_2);
+  });
 
   it("Should create facility", async function(){
     const _tokenId = "2";

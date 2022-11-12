@@ -4,18 +4,18 @@ import { Card, Col, Badge, Stack, Row } from "react-bootstrap";
 import {  Button } from "react-bootstrap";
 import { truncateAddress } from "../../../utils";
 import Identicon from "../../ui/Identicon";
-import {
-  fundFacility,
-  reList,
-  fundRelistFacility,
-} from "../../../utils/minter";
 
-  const NftCard = ({
+
+  const NftCard = ({           
   facility,
-  account,
   contractOwner,
+  account,
+  fundFacility,
+  reFundFacility,
+  reList,
+ 
   }) => {
-  const{image, description, owner, name, index, price, properties, sold } = facility;
+  const {image, description, owner, name, index, price, properties, sold } = facility;
 
   return (
     <Col key={index}>
@@ -62,11 +62,11 @@ import {
               </React.Fragment>
               
           ) : !sold && contractOwner !== account? (
-            <Button variant="primary" onClick={ fundFacility}>
+            <Button variant="primary" onClick={fundFacility}>
               Fund Facility
             </Button>
             ): contractOwner !== account && account !== owner && sold ? 
-             (<Button variant="primary" onClick={fundRelistFacility }>
+             (<Button variant="primary" onClick={reFundFacility}>
              Re-fund Facility
            </Button>
           ) : account === owner  && sold ? (
