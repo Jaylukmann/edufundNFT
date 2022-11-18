@@ -1,0 +1,11 @@
+{
+    "name": "Edufund#7",
+    "description": "A edufund NFT use to fund online free course access ",
+    "image": "QmSiGTwi2yLUGoN3p5dXaCNxjJkjEx3LhsBoGGk9AexLjb/7.png",
+    "attributes": [
+        { "trait_type": "type", "value": "basic" },
+        { "trait_type": "type", "value": "secondary" },
+        { "trait_type": "type", "value": "tertiary" },
+        { "trait_type": "need", "value": "online-free-course-access"}
+    ]
+}

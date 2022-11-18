@@ -1,0 +1,11 @@
+{
+    "name": "Edufund#6",
+    "description": "A edufund NFT use to fund a library ",
+    "image": "QmSiGTwi2yLUGoN3p5dXaCNxjJkjEx3LhsBoGGk9AexLjb/6.jpg",
+    "attributes": [
+        { "trait_type": "type", "value": "basic" },
+        { "trait_type": "type", "value": "secondary" },
+        { "trait_type": "type", "value": "tertiary" },
+        { "trait_type": "need", "value": "library"}
+    ]
+}
