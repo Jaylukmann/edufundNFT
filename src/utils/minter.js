@@ -106,7 +106,6 @@ export const getFacility = async (minterContract) => {
         const meta = await getNftMeta(res);
         const owner = await getNftOwner(minterContract, i);
         resolve({
-          index: i,
           tokenId: i,
           owner,
           price: facility.price,
@@ -159,7 +158,6 @@ export const getContractOwner = async (minterContract) => {
 
 export const fundFacility = async (
   minterContract,
-  index,
   performActions,
   tokenId
 ) => {
@@ -167,11 +165,12 @@ export const fundFacility = async (
     await performActions(async (kit) => {
       const { defaultAccount } = kit;
       const facility = await minterContract.methods
-      .getFacility(index).call();
+      .getFacility(tokenId).call();
       await minterContract.methods
         .buyNFT_to_fund_Edu(tokenId)
         .send({ from: defaultAccount, value: facility.price });
     });
+    console.log("after funding")
   } catch (error) {
     console.log({ error });
   }
