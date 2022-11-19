@@ -133,15 +133,16 @@ contract EduFundNFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
      * @dev allow users to buy and fund a facility by buying the NFT
      */
     function buyNFT_to_fund_Edu(uint256 _tokenId) public payable {
-        uint256 price = facility[_tokenId].price;
-        address payable owner = facility[_tokenId].owner;
+        EduFacility storage currentFacility = facility[_tokenId];
+        uint256 price = currentFacility.price;
+        address payable owner = currentFacility.owner;
         require(
             msg.value == price,
             "Value must be equal to or greater than NFT price"
         );
-        require(facility[_tokenId].sold == false, " NFT is not for sale");
-        facility[_tokenId].sold = true;
-        facility[_tokenId].owner = payable(msg.sender);
+        require(currentFacility.sold == false, " NFT is not for sale");
+        currentFacility.sold = true;
+        currentFacility.owner = payable(msg.sender);
         _transfer(address(this), msg.sender, _tokenId);
         (bool success, ) = payable(owner).call{value: price}("");
         require(success, "Transfer failed");
@@ -156,11 +157,12 @@ contract EduFundNFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
         canRelist(_tokenId)
     {
         require(msg.value == listPrice);
+        EduFacility storage currentFacility = facility[_tokenId];
         _transfer(msg.sender, address(this), _tokenId);
-        facility[_tokenId].sold = false;
-        facility[_tokenId].owner = payable(msg.sender);
-        facility[_tokenId].price = newPrice;
-        (bool success, ) = payable(owner()).call{value: price}("");
+        currentFacility.sold = false;
+        currentFacility.owner = payable(msg.sender);
+        currentFacility.price = newPrice;
+        (bool success, ) = payable(owner()).call{value: msg.value}("");
         require(success, "Transfer failed");
     }
 
