@@ -33,6 +33,7 @@ const NftList = ({ minterContract, name }) => {
       const allFacility = await  getFacility(minterContract);
       if (!allFacility) return;
       setFacilities(allFacility);
+      console.log(allFacility)
     } catch (error) {
       console.log({ error });
     } finally {
@@ -56,10 +57,10 @@ const NftList = ({ minterContract, name }) => {
     }
   };
 
-   const fund = async (index, tokenId) => {
+   const fund = async (tokenId) => {
     try {
       setLoading(true);
-      await fundFacility(minterContract, index, tokenId, performActions);
+      await fundFacility(minterContract,performActions, tokenId);
       toast(<NotificationSuccess text="Funding an EduFundNFT...." />);
       getTotalFacility();
     } catch (error) {
@@ -83,19 +84,6 @@ const NftList = ({ minterContract, name }) => {
     }
   };
 
-  //  const refundNFT = async (index, tokenId) => {
-  //   try {
-  //     setLoading(true);
-  //     await fundFacility(minterContract, index, tokenId, performActions);
-  //     toast(<NotificationSuccess text="Re-funding an EduFundNFT...." />);
-  //     getTotalFacility();
-  //   } catch (error) {
-  //     console.log(error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
 
   const getOwner = useCallback(async (minterContract) => {
     // get the address that deployed the NFT contract
@@ -116,7 +104,6 @@ const NftList = ({ minterContract, name }) => {
   if (address) {
     return (
       <>
-      {console.log(nftOwner, address)}
         {!loading ? (
           <>
             <div className="d-flex justify-content-between align-items-center mb-4">
@@ -130,11 +117,11 @@ const NftList = ({ minterContract, name }) => {
               {/* display all NFTs */}
               {facilities.map((facility) => (
                 <NftCard
-                  key={facility.index}
+                  key={facility.tokenId}
                   account={defaultAccount}
                   contractOwner={nftOwner}
-                  fundFacility={() => fund( facility.tokenId)}
-                  reFundFacility={() => fund( facility.tokenId)}
+                  fundFacility={() => fund(facility.tokenId)}
+                  reFundFacility={() => fund(facility.tokenId)}
                   reList={() => listAgain(facility.tokenId,facility.price)}
                   facility={{
                     ...facility,     
