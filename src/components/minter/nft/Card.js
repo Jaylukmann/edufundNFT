@@ -5,15 +5,12 @@ import {  Button } from "react-bootstrap";
 import { truncateAddress } from "../../../utils";
 import Identicon from "../../ui/Identicon";
 
-
   const NftCard = ({           
   facility,
   contractOwner,
   account,
   fundFacility,
-  reFundFacility,
-  reList,
- 
+  reList
   }) => {
   const {image, description, owner, name, index, price, properties, sold } = facility;
 
@@ -66,7 +63,7 @@ import Identicon from "../../ui/Identicon";
               Fund Facility
             </Button>
             ): contractOwner !== account && account !== owner && sold ? 
-             (<Button variant="primary" onClick={reFundFacility}>
+             (<Button variant="primary" onClick={fundFacility}>
              Re-fund Facility
            </Button>
           ) : account === owner  && sold ? (

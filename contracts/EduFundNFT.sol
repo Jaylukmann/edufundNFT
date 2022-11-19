@@ -186,4 +186,4 @@ contract EduFundNFT is ERC721URIStorage,ERC721Enumerable,Ownable,IERC721Receiver
 
 }
 //EduFundNFT  0xd9bD3a52BC33064eEDe5F331173B9B6FB50411f8
-//
+// // "deploy": "npx hardhat run --network alfajores scripts/deploy.js",

@@ -56,14 +56,15 @@ const NftList = ({ minterContract, name }) => {
     }
   };
 
-   const fund = async (index, tokenId) => {
+   const fund = async (tokenId) => {
     try {
       setLoading(true);
-      await fundFacility(minterContract, index, tokenId, performActions);
+      await fundFacility(minterContract,performActions,tokenId,);
       toast(<NotificationSuccess text="Funding an EduFundNFT...." />);
       getTotalFacility();
     } catch (error) {
-      console.log(error);
+      console.log({error});
+      toast(<NotificationError text="Failed to fund an NFT." />);
     } finally {
       setLoading(false);
     }
@@ -73,11 +74,13 @@ const NftList = ({ minterContract, name }) => {
     try {
       setLoading(true);
       const _price = ethers.utils.parseUnits(String(price), "ether");
-      await reList(minterContract, index,_price, performActions);
+      await reList(minterContract,performActions, index,_price );
       toast(<NotificationSuccess text="Re-listing an EdufundNFT...." />);
       getTotalFacility();
     } catch (error) {
-      console.log(error);
+      console.log({error});
+      toast(<NotificationError text="Failed to re-list an NFT." />);
+      
     } finally {
       setLoading(false);
     }

@@ -157,12 +157,7 @@ export const getContractOwner = async (minterContract) => {
   }
 };
 
-export const fundFacility = async (
-  minterContract,
-  index,
-  performActions,
-  tokenId
-) => {
+export const fundFacility = async (minterContract, performActions,index,tokenId) => {
   try {
     await performActions(async (kit) => {
       const { defaultAccount } = kit;
