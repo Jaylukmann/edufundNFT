@@ -12,10 +12,10 @@ import Identicon from "../../ui/Identicon";
   fundFacility,
   reList
   }) => {
-  const {image, description, owner, name, index, price, properties, sold } = facility;
+  const {image, description, owner, name, price, properties, sold } = facility;
 
   return (
-    <Col key={index}>
+    <Col>
       <Card className=" h-100">
         <Card.Header>
           <Stack direction="horizontal" gap={2}>
@@ -39,7 +39,7 @@ import Identicon from "../../ui/Identicon";
           <div>
             <Row className="mt-2">
               {properties?.map((property) => (
-                <Col key={index}>
+                <Col>
                   <div className="border rounded bg-light">
                     <div className="text-secondary fw-lighter small text-capitalize">
                       {property.trait_type}
