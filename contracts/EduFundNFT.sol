@@ -1,17 +1,16 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.7;
 
-import "@openzeppelin/contracts/utils/Counters.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
-import "hardhat/console.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
 
 
-contract EduFundNFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
+contract EduFundNFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable,IERC721Receiver{
 
      // STATE VARIABLES
     using Counters for Counters.Counter;
@@ -23,18 +22,25 @@ contract EduFundNFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
 
     //The following functions are overrides required by Solidity as they are declared times from the source
 
-    function _beforeTokenTransfer(
-        address from,
-        address to,
-        uint256 tokenId
-    ) internal override(ERC721, ERC721Enumerable) {
+
+
+ function safeMint(address to, string memory uri) public onlyOwner {
+        uint256 tokenId = _tokenIdCounter.current();
+        _tokenIdCounter.increment();
+        _safeMint(to, tokenId);
+        _setTokenURI(tokenId, uri);
+    }
+
+    // The following functions are overrides required by Solidity.
+
+    function _beforeTokenTransfer(address from, address to, uint256 tokenId)
+        internal
+        override(ERC721,ERC721Enumerable)
+    {
         super._beforeTokenTransfer(from, to, tokenId);
     }
 
-    function _burn(uint256 tokenId)
-        internal
-        override(ERC721, ERC721URIStorage)
-    {
+    function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
         super._burn(tokenId);
     }
 
@@ -74,6 +80,7 @@ contract EduFundNFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
         uint256 tokenId;
         address payable owner;
         uint256 price;
+        bool hasBeenSoldBefore;
         bool sold;
     }
     mapping(uint256 => EduFacility) private tokenIdToFacility;
@@ -85,16 +92,17 @@ contract EduFundNFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
         uint256 price,
         bool sold
     );
-
+                //MODIFIERS
     modifier canRelist(uint256 _tokenId) {
         EduFacility storage currentFacility = tokenIdToFacility[_tokenId];
         require(
-            tokenIdToFacility[_tokenId].owner == payable(msg.sender),
+            tokenIdToFacility[_tokenId].owner == payable(msg.sender) &&
+            tokenIdToFacility[_tokenId].hasBeenSoldBefore == true,
             "Only new NFT owner Can Relist"
         );
         _;
     }
-
+    
     /**
      * @dev allow the contract's owner to create new NFTs representing facilities that needs funding
      */
@@ -115,6 +123,7 @@ contract EduFundNFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
             newTokenId,
             payable(msg.sender),
             price,
+            false,
             false
         );
         safeTransferFrom(tokenIdToFacility[newTokenId].owner, address(this), newTokenId);
@@ -128,17 +137,29 @@ contract EduFundNFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
     function buyNFT_to_fund_Edu(uint256 _tokenId) public payable {
         EduFacility storage currentFacility = tokenIdToFacility[_tokenId];
         uint256 price = currentFacility.price;
-        address payable owner = currentFacility.owner;
+        address payable CurrentOwner = currentFacility.owner;
         require(
-            msg.value == price,
+            msg.value >= price,
             "Value must be equal to or greater than NFT price"
         );
         require(currentFacility.sold == false, " NFT is not for sale");
-        currentFacility.sold = true;
-        currentFacility.owner = payable(msg.sender);
+       
+        if(currentFacility.hasBeenSoldBefore == false){
         safeTransferFrom(address(this), msg.sender, _tokenId);
-        (bool success, ) = payable(owner).call{value: price}("");
-        require(success, "Transfer failed");
+        (bool success, ) = payable(Ownable.owner()).call{value: msg.value}("");
+        require(success, "Transfer failed 1");
+         
+        }else {
+             safeTransferFrom(address(this), msg.sender, _tokenId);
+             (bool sent, ) = payable(CurrentOwner).call{value:(msg.value * 30)/100}("");
+        require(sent, "Transfer failed 2");
+
+          (bool celoSent, ) = payable(Ownable.owner()).call{value:(msg.value * 70)/100}("");
+        require(celoSent, "Transfer failed 3");
+        }
+         currentFacility.hasBeenSoldBefore = true;
+         currentFacility.sold = true;
+         currentFacility.owner = payable(msg.sender);
     }
 
     /**
@@ -149,12 +170,13 @@ contract EduFundNFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
         payable
         canRelist(_tokenId)
     {
-        changeNFTPrice(newPrice,_tokenId);
         EduFacility storage currentFacility = tokenIdToFacility[_tokenId];
+        currentFacility.price = newPrice ;
         safeTransferFrom(msg.sender, address(this), _tokenId);
         currentFacility.sold = false;
         currentFacility.owner = payable(msg.sender);
         currentFacility.price = newPrice;
+         currentFacility.hasBeenSoldBefore = true;
     }
 
     /**
@@ -166,7 +188,7 @@ contract EduFundNFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
     }
 
     //GETTERS
-    function getListPrice() public view returns (uint256 _tokenId) {
+    function getTokenPrice(uint256 _tokenId) public view returns (uint256) {
          EduFacility storage currentFacility = tokenIdToFacility[_tokenId];
         return currentFacility.price;
      
@@ -189,8 +211,13 @@ contract EduFundNFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable {
         address,
         uint256,
         bytes calldata
-    ) external pure returns (bytes4) {
+    ) external pure override returns (bytes4) {
         return this.onERC721Received.selector;
     }
 }
-//EduFundNFT  
+//EduFundNFT  0xDbfA2A5d88da8f29A9D9CDd631193D437ed61194
+//edufundNFT on metamask 0x0f4152B7D046d6040208F4abB612712411B3be86
+//https://remix.ethereum.org/#optimize=false&evmVersion=null&version=soljson-v0.8.7+commit.e28d00a7.js&runs=200
+//TokenURI bafybeigkzugxdgilfwei3i6v4xhzbcodlnd6bchvcpzb6itte7wk4ulu3m
+//npx hardhat run --network alfajores scripts/deploy.js
+

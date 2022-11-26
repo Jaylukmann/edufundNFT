@@ -136,10 +136,10 @@ export const getNftMeta = async (ipfsUrl) => {
 };
 
 // get the owner address of an NFT
-export const getNftOwner = async (minterContract, index) => {
+export const getNftOwner = async (minterContract, tokenId) => {
   try {
     return await minterContract.methods
-    .getNftOwner(index).call();
+    .ownerOf(tokenId).call();
   } catch (e) {
     console.log({ e });
   }
@@ -149,7 +149,7 @@ export const getNftOwner = async (minterContract, index) => {
 export const getContractOwner = async (minterContract) => {
   try {
     let owner = await minterContract.methods
-    .getContractOwner().call();
+    .owner().call();
     return owner;
   } catch (e) {
     console.log({ e });
@@ -170,7 +170,7 @@ export const fundFacility = async (
         .buyNFT_to_fund_Edu(tokenId)
         .send({ from: defaultAccount, value: facility.price });
     });
-    console.log("after funding")
+    console.log("Facility funded successfully")
   } catch (error) {
     console.log({ error });
   }
@@ -180,8 +180,9 @@ export const reList = async (minterContract, performActions, tokenId) => {
   try {
     await performActions(async (kit) => {
       const { defaultAccount } = kit;
-      const price = await minterContract.methods
-      .getListPrice().call();
+      const facility = await minterContract.methods
+      .getFacility(tokenId).call();
+      const price = facility.price;
        console.log(price);
        await minterContract.methods
         .re_ListNFT(tokenId,price)

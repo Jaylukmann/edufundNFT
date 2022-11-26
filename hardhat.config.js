@@ -33,7 +33,7 @@ const getEnv = (variable, optional = false) => {
  * @type import('hardhat/config').HardhatUserConfig
  */
  module.exports = {
-  solidity: "0.8.4",
+  solidity: "0.8.7",
   networks: {
     alfajores: {
       url: "https://alfajores-forno.celo-testnet.org",
