@@ -1,26 +1,26 @@
 {
   "files": {
     "main.css": "/edufundNFT/static/css/main.d87cbb72.chunk.css",
-    "main.js": "/edufundNFT/static/js/main.23e4197b.chunk.js",
-    "main.js.map": "/edufundNFT/static/js/main.23e4197b.chunk.js.map",
+    "main.js": "/edufundNFT/static/js/main.32846fce.chunk.js",
+    "main.js.map": "/edufundNFT/static/js/main.32846fce.chunk.js.map",
     "runtime-main.js": "/edufundNFT/static/js/runtime-main.b66a0ae6.js",
     "runtime-main.js.map": "/edufundNFT/static/js/runtime-main.b66a0ae6.js.map",
     "static/css/2.406f7f29.chunk.css": "/edufundNFT/static/css/2.406f7f29.chunk.css",
-    "static/js/2.c69c622d.chunk.js": "/edufundNFT/static/js/2.c69c622d.chunk.js",
-    "static/js/2.c69c622d.chunk.js.map": "/edufundNFT/static/js/2.c69c622d.chunk.js.map",
+    "static/js/2.6ae612a9.chunk.js": "/edufundNFT/static/js/2.6ae612a9.chunk.js",
+    "static/js/2.6ae612a9.chunk.js.map": "/edufundNFT/static/js/2.6ae612a9.chunk.js.map",
     "static/js/3.38ddba8c.chunk.js": "/edufundNFT/static/js/3.38ddba8c.chunk.js",
     "static/js/3.38ddba8c.chunk.js.map": "/edufundNFT/static/js/3.38ddba8c.chunk.js.map",
     "index.html": "/edufundNFT/index.html",
     "static/css/2.406f7f29.chunk.css.map": "/edufundNFT/static/css/2.406f7f29.chunk.css.map",
     "static/css/main.d87cbb72.chunk.css.map": "/edufundNFT/static/css/main.d87cbb72.chunk.css.map",
-    "static/js/2.c69c622d.chunk.js.LICENSE.txt": "/edufundNFT/static/js/2.c69c622d.chunk.js.LICENSE.txt",
+    "static/js/2.6ae612a9.chunk.js.LICENSE.txt": "/edufundNFT/static/js/2.6ae612a9.chunk.js.LICENSE.txt",
     "static/media/bootstrap-icons.css": "/edufundNFT/static/media/bootstrap-icons.f2539a50.woff2"
   },
   "entrypoints": [
     "static/js/runtime-main.b66a0ae6.js",
     "static/css/2.406f7f29.chunk.css",
-    "static/js/2.c69c622d.chunk.js",
+    "static/js/2.6ae612a9.chunk.js",
     "static/css/main.d87cbb72.chunk.css",
-    "static/js/main.23e4197b.chunk.js"
+    "static/js/main.32846fce.chunk.js"
   ]
 }
