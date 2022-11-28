@@ -66,10 +66,18 @@ import Identicon from "../../ui/Identicon";
              (<Button variant="primary" onClick={fundFacility}>
              Re-fund Facility
            </Button>
-          ) : account === owner  && sold ? (
+          ) : account === owner  && sold ? 
+         
+          (
+            <div>
+            <form>
+              <label>New Price</label>:
+            <input type="number" newPrice ="newPrice" value={price * 3 / 10 ** 18} /> CELO
+          </form>
             <Button variant="outline-danger" onClick={reList}>
             Re-list
             </Button>
+            </div>
           ) : (
             <Button variant="outline-danger" disabled>
               SOLD
