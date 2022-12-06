@@ -80,7 +80,6 @@ contract EduFundNFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable,IERC7
         uint256 tokenId;
         address payable owner;
         uint256 price;
-        bool hasBeenSoldBefore;
         bool sold;
     }
     mapping(uint256 => EduFacility) private tokenIdToFacility;
@@ -97,7 +96,7 @@ contract EduFundNFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable,IERC7
         EduFacility storage currentFacility = tokenIdToFacility[_tokenId];
         require(
             tokenIdToFacility[_tokenId].owner == payable(msg.sender) &&
-            tokenIdToFacility[_tokenId].hasBeenSoldBefore == true,
+            tokenIdToFacility[_tokenId].sold == true,
             "Only new NFT owner Can Relist"
         );
         _;
@@ -123,7 +122,6 @@ contract EduFundNFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable,IERC7
             newTokenId,
             payable(msg.sender),
             price,
-            false,
             false
         );
         safeTransferFrom(tokenIdToFacility[newTokenId].owner, address(this), newTokenId);
@@ -142,22 +140,20 @@ contract EduFundNFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable,IERC7
             msg.value >= price,
             "Value must be equal to or greater than NFT price"
         );
-        require(currentFacility.sold == false, " NFT is not for sale");
        
-        if(currentFacility.hasBeenSoldBefore == false){
+        if(currentFacility.sold == false){
         safeTransferFrom(address(this), msg.sender, _tokenId);
         (bool success, ) = payable(Ownable.owner()).call{value: msg.value}("");
-        require(success, "Transfer failed 1");
+        require(success, "Transfer to contract owner failed ");
          
         }else {
              safeTransferFrom(address(this), msg.sender, _tokenId);
              (bool sent, ) = payable(CurrentOwner).call{value:(msg.value * 30)/100}("");
-        require(sent, "Transfer failed 2");
+        require(sent, "part transfer to current Owner failed ");
 
           (bool celoSent, ) = payable(Ownable.owner()).call{value:(msg.value * 70)/100}("");
-        require(celoSent, "Transfer failed 3");
+        require(celoSent, "part transfer to contract owner failed");
         }
-         currentFacility.hasBeenSoldBefore = true;
          currentFacility.sold = true;
          currentFacility.owner = payable(msg.sender);
     }
@@ -172,10 +168,10 @@ contract EduFundNFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable,IERC7
         EduFacility storage currentFacility = tokenIdToFacility[_tokenId];
         currentFacility.price = newPrice ;
         safeTransferFrom(msg.sender, address(this), _tokenId);
-        currentFacility.sold = false;
+        currentFacility.sold = true;
         currentFacility.owner = payable(msg.sender);
         currentFacility.price = newPrice;
-         currentFacility.hasBeenSoldBefore = true;
+       
     }
 
     /**
@@ -214,9 +210,5 @@ contract EduFundNFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable,IERC7
         return this.onERC721Received.selector;
     }
 }
-//EduFundNFT  0x79c4BA72f02980Ee6495114B48aaA005fA817be4
-//edufundNFT on metamask 0x0f4152B7D046d6040208F4abB612712411B3be86
-//https://remix.ethereum.org/#optimize=false&evmVersion=null&version=soljson-v0.8.7+commit.e28d00a7.js&runs=200
-//TokenURI bafybeigkzugxdgilfwei3i6v4xhzbcodlnd6bchvcpzb6itte7wk4ulu3m
-//npx hardhat run --network alfajores scripts/deploy.js
+
 
