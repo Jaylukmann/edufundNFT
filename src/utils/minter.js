@@ -186,7 +186,7 @@ export const reList = async (minterContract, performActions, tokenId) => {
        console.log(price);
        await minterContract.methods
         .re_ListNFT(tokenId,price)
-        .send({ from: defaultAccount,value: price });
+        .send({ from: defaultAccount});
     });
   } catch (error) {
     console.log({ error });
