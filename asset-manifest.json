@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/edufundNFT/static/css/main.d87cbb72.chunk.css",
-    "main.js": "/edufundNFT/static/js/main.32846fce.chunk.js",
-    "main.js.map": "/edufundNFT/static/js/main.32846fce.chunk.js.map",
+    "main.js": "/edufundNFT/static/js/main.b264f5b4.chunk.js",
+    "main.js.map": "/edufundNFT/static/js/main.b264f5b4.chunk.js.map",
     "runtime-main.js": "/edufundNFT/static/js/runtime-main.b66a0ae6.js",
     "runtime-main.js.map": "/edufundNFT/static/js/runtime-main.b66a0ae6.js.map",
     "static/css/2.406f7f29.chunk.css": "/edufundNFT/static/css/2.406f7f29.chunk.css",
@@ -21,6 +21,6 @@
     "static/css/2.406f7f29.chunk.css",
     "static/js/2.6ae612a9.chunk.js",
     "static/css/main.d87cbb72.chunk.css",
-    "static/js/main.32846fce.chunk.js"
+    "static/js/main.b264f5b4.chunk.js"
   ]
 }
