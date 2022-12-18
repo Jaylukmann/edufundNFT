@@ -182,10 +182,8 @@ export const reList = async (minterContract, performActions, tokenId) => {
       const { defaultAccount } = kit;
       const facility = await minterContract.methods
       .getFacility(tokenId).call();
-      const price = facility.price;
-       console.log(price);
        await minterContract.methods
-        .re_ListNFT(tokenId,price)
+        .re_ListNFT(tokenId,facility.price)
         .send({ from: defaultAccount});
     });
   } catch (error) {

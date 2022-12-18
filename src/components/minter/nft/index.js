@@ -12,7 +12,7 @@ import {
   fundFacility,
   reList,
   createFacility,
-  getContractOwner,
+  getContractOwner
 } from "../../../utils/minter";
 import { Row } from "react-bootstrap";
 
@@ -22,9 +22,11 @@ const NftList = ({ minterContract, name }) => {
    */
   const { performActions, address, kit } = useContractKit();
   const [facilities, setFacilities] = useState([]);
+  //const [newPrice, setNewPrice] = useState("");
   const [loading, setLoading] = useState(false);
   const [nftOwner, setNftOwner] = useState(null);
   const { defaultAccount } = kit;
+
   const getTotalFacility = useCallback(async () => {
     try {
       setLoading(true);
@@ -71,11 +73,11 @@ const NftList = ({ minterContract, name }) => {
     }
   };
 
-     const listAgain = async (index,price) => {
+     const listAgain = async (tokenId,price) => {
     try {
       setLoading(true);
-      const _price = ethers.utils.parseUnits(String(price), "ether");
-      await reList(minterContract,performActions, index,_price );
+       const _price = ethers.utils.parseUnits(String(price), "ether");
+      await reList(minterContract,performActions, tokenId, _price );
       toast(<NotificationSuccess text="Re-listing an EdufundNFT...." />);
       getTotalFacility();
     } catch (error) {
@@ -86,7 +88,6 @@ const NftList = ({ minterContract, name }) => {
       setLoading(false);
     }
   };
-
 
   const getOwner = useCallback(async (minterContract) => {
     // get the address that deployed the NFT contract

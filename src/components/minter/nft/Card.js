@@ -1,4 +1,4 @@
-import React from "react";
+import React  from "react";
 import PropTypes from "prop-types";
 import { Card, Col, Badge, Stack, Row } from "react-bootstrap";
 import {  Button } from "react-bootstrap";
@@ -24,7 +24,7 @@ import Identicon from "../../ui/Identicon";
               {truncateAddress(owner)}
             </span>
             <Badge bg="secondary" className="ms-auto">
-              {price / 10 ** 18} CELO
+              {price/ 10 ** 18} CELO
             </Badge>
           </Stack>
         </Card.Header>
@@ -71,14 +71,9 @@ import Identicon from "../../ui/Identicon";
           ) : account === owner  && sold ? 
     
           (<div>
-            <form>
-              <label>New Price</label>:
-            <input type="number" newPrice ="newPrice" /> CELO
-            <Button variant="outline-danger" onClick={reList}>
-            Re-list
+            <Button variant="outline-success" onClick={reList}>
+              Re-list
             </Button>
-          </form>
-            
             </div>
           ) : (
             <Button variant="outline-danger" disabled>

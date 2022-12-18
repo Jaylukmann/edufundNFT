@@ -161,16 +161,15 @@ contract EduFundNFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable,IERC7
     /**
      * @dev allow users to relist NFTs they bought when they funded a facility
      */
-   function re_ListNFT(uint256 _tokenId, uint256 newPrice)
+    function re_ListNFT(uint256 _tokenId, uint256 newPrice)
         public
         canRelist(_tokenId)
     {
         EduFacility storage currentFacility = tokenIdToFacility[_tokenId];
         currentFacility.price = newPrice ;
         safeTransferFrom(msg.sender, address(this), _tokenId);
-        currentFacility.sold = true;
-        currentFacility.owner = payable(msg.sender);
-        currentFacility.price = newPrice;
+         currentFacility.sold = true;
+         currentFacility.owner = payable(msg.sender);
        
     }
 
@@ -210,5 +209,3 @@ contract EduFundNFT is ERC721, ERC721URIStorage, ERC721Enumerable, Ownable,IERC7
         return this.onERC721Received.selector;
     }
 }
-
-
